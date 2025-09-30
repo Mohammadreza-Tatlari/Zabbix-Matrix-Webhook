@@ -124,8 +124,8 @@ curl -X POST http://your-ip-address:5001/webhook  -H "Content-Type: application/
             sends payload as following to matrix-webhook:
             ```js
             {
-            "room_id": "!uGITBplInnsfxcHIgL:matrix.org",
-            "subject": "TESTOOO Alert",
+            "room_id": "!room_id:matrix.org",
+            "subject": "test Alert",
             "message": "This is a test message",
             "severity": "High"
             }
