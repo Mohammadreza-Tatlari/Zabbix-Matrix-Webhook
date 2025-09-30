@@ -1,0 +1,9 @@
+threading
+os
+dotenv
+simplematrixbotlib
+uuid
+html
+time
+flask
+requests
