@@ -202,3 +202,4 @@ reload daemon for changes on service:
 
 
 
+Encryption [Manual](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#usage-of-creds-class)
