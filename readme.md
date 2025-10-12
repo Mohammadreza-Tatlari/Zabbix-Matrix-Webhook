@@ -182,6 +182,14 @@ After=network.target
 #User=zabbix  # add user if it needs to be defined in my case not yet
 # WorkingDirectory=
 ExecStart=/your-path-to-venv-python/matrix-box/bin/python yourpath-to-matrix-webhook/matrix-webhook.py  # Full path of Executer and Python script is 
+
+# Logging
+StandardOutput=append:journal
+StandardError=append:journal
+
+Restart=always
+
+
 # Add any other necessary environment variables here if needed
 Environment=VAR1=value1
 Environment=VAR2=value2
@@ -190,6 +198,17 @@ Environment=VAR2=value2
 WantedBy=multi-user.target
 ``` 
 
+### To view all logs for your service:
+
+```sh
+journalctl -u Zabbix-Matrix-Webhook.service
+```
+(To follow the logs in real-time use` tail -f`)
+
+
+```sh
+journalctl -f -u Zabbix-Matrix-Webhook.service
+```
 
 start your service:
 ``` systemctl start Zabbix-Matrix-Webhook.service ```
@@ -200,6 +219,58 @@ view logs via journalctl:
 reload daemon for changes on service:
 ``` systemctl daemon-reload ```
 
+
+
+### Creating Log file and Log Rotation for 
+we also can create a Service which will handle `zabbix-matrix.log` in `/var/log` to do that:
+
+1. configure the Service file as follow:
+
+```sh
+[Unit]
+Description= Description About your Service
+After=network.target
+
+[Service]
+#User=zabbix  # add user if it needs to be defined in my case not yet
+# WorkingDirectory=
+ExecStart=/your-path-to-venv-python/matrix-box/bin/python yourpath-to-matrix-webhook/matrix-webhook.py  # Full path of Executer and Python script is 
+
+# Logging
+StandardOutput=append:/var/log/zabbix-matrix.log #change this file 
+StandardError=append:/var/log/zabbix-matrix.log #change this file
+
+Restart=always
+
+
+# Add any other necessary environment variables here if needed
+Environment=VAR1=value1
+Environment=VAR2=value2
+
+[Install]
+WantedBy=multi-user.target
+``` 
+
+2. create a log file with proper permission: </br>
+`sudo touch /var/log/zabbix-matrix.log` </br>
+`sudo chmod 755 /var/log/zabbix-matrix.log` it should be modified based on your need or even user permission
+
+3. create a `logroate` for your service as `/etc/logrotate.d/zabbix-matrix` </br>
+```ini
+/var/log/zabbix-matrix.log {
+    weekly              # Rotate weekly
+    missingok           # Don't error if file doesn't exist
+    rotate 7            # Keep 7 old log files
+    compress            # Compress old log files
+    delaycompress       # Compress the file in the next cycle
+    notifempty          # Don't rotate if the log file is empty
+    # create 0640 myuser myuser  # Re-create the file with specific permissions/owner
+    # If your service needs a reload after log rotation (not common for simple file writes), add:
+    # postrotate
+    #     /bin/systemctl reload myscript.service > /dev/null 2>&1 || true
+    # endscript
+}
+```
 
 
 Encryption [Manual](https://simple-matrix-bot-lib.readthedocs.io/en/latest/manual.html#usage-of-creds-class)
