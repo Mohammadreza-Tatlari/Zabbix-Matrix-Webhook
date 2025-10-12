@@ -184,8 +184,8 @@ After=network.target
 ExecStart=/your-path-to-venv-python/matrix-box/bin/python yourpath-to-matrix-webhook/matrix-webhook.py  # Full path of Executer and Python script is 
 
 # Logging
-StandardOutput=append:journal
-StandardError=append:journal
+StandardOutput=journal
+StandardError=journal
 
 Restart=always
 
